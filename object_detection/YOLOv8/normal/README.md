@@ -32,6 +32,7 @@ Usage:
 --onnx=yolov8s.onnx \
 --saveEngine=yolov8s.engine \
 --fp16
+# or --int8
 ```
 
 ### 2. Direct to TensorRT (NOT RECOMMAND!!)
