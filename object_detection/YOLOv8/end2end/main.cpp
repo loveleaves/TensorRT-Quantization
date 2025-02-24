@@ -58,6 +58,7 @@ int main(int argc, char** argv)
     std::vector<std::string> imagePathList;
     bool isVideo{false};
 
+    // 异常情况退出，需释放，避免内存泄露，TODO
     auto yolov8 = new YOLOv8(engine_file_path);
     yolov8->make_pipe(true);
 

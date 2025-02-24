@@ -9,7 +9,8 @@
 #include "filesystem.hpp"
 #include <opencv2/opencv.hpp>
 
-#define CHECK(call)                                                         \
+#ifndef CUDA_CHECK
+#define CUDA_CHECK(call)                                                    \
     do                                                                      \
     {                                                                       \
         const cudaError_t error_code = call;                                \
@@ -23,6 +24,7 @@
             exit(1);                                                        \
         }                                                                   \
     } while (0)
+#endif // CUDA_CHECK
 
 class Logger : public nvinfer1::ILogger
 {

@@ -140,12 +140,12 @@ YOLOv8::~YOLOv8()
     cudaStreamDestroy(this->stream);
     for (auto &ptr : this->device_ptrs)
     {
-        CHECK(cudaFree(ptr));
+        CUDA_CHECK(cudaFree(ptr));
     }
 
     for (auto &ptr : this->host_ptrs)
     {
-        CHECK(cudaFreeHost(ptr));
+        CUDA_CHECK(cudaFreeHost(ptr));
     }
 }
 void YOLOv8::make_pipe(bool warmup)
@@ -154,7 +154,7 @@ void YOLOv8::make_pipe(bool warmup)
     for (auto &bindings : this->input_bindings)
     {
         void *d_ptr;
-        CHECK(cudaMallocAsync(&d_ptr, bindings.size * bindings.dsize, this->stream));
+        CUDA_CHECK(cudaMallocAsync(&d_ptr, bindings.size * bindings.dsize, this->stream));
         this->device_ptrs.push_back(d_ptr);
 
 #ifdef TRT_10
@@ -168,8 +168,8 @@ void YOLOv8::make_pipe(bool warmup)
     {
         void *d_ptr, *h_ptr;
         size_t size = bindings.size * bindings.dsize;
-        CHECK(cudaMallocAsync(&d_ptr, size, this->stream));
-        CHECK(cudaHostAlloc(&h_ptr, size, 0));
+        CUDA_CHECK(cudaMallocAsync(&d_ptr, size, this->stream));
+        CUDA_CHECK(cudaHostAlloc(&h_ptr, size, 0));
         this->device_ptrs.push_back(d_ptr);
         this->host_ptrs.push_back(h_ptr);
 
@@ -188,7 +188,7 @@ void YOLOv8::make_pipe(bool warmup)
                 size_t size = bindings.size * bindings.dsize;
                 void *h_ptr = malloc(size);
                 memset(h_ptr, 0, size);
-                CHECK(cudaMemcpyAsync(this->device_ptrs[0], h_ptr, size, cudaMemcpyHostToDevice, this->stream));
+                CUDA_CHECK(cudaMemcpyAsync(this->device_ptrs[0], h_ptr, size, cudaMemcpyHostToDevice, this->stream));
                 free(h_ptr);
             }
             this->infer();
@@ -260,7 +260,7 @@ void YOLOv8::copy_from_Mat(const cv::Mat &image)
     cv::Size size{width, height};
     this->letterbox(image, nchw, size);
 
-    CHECK(cudaMemcpyAsync(
+    CUDA_CHECK(cudaMemcpyAsync(
         this->device_ptrs[0], nchw.ptr<float>(), nchw.total() * nchw.elemSize(), cudaMemcpyHostToDevice, this->stream));
 
 #ifdef TRT_10
@@ -277,7 +277,7 @@ void YOLOv8::copy_from_Mat(const cv::Mat &image, cv::Size &size)
     cv::Mat nchw;
     this->letterbox(image, nchw, size);
 
-    CHECK(cudaMemcpyAsync(
+    CUDA_CHECK(cudaMemcpyAsync(
         this->device_ptrs[0], nchw.ptr<float>(), nchw.total() * nchw.elemSize(), cudaMemcpyHostToDevice, this->stream));
 
 #ifdef TRT_10
@@ -299,7 +299,7 @@ void YOLOv8::infer()
     for (int i = 0; i < this->num_outputs; i++)
     {
         size_t osize = this->output_bindings[i].size * this->output_bindings[i].dsize;
-        CHECK(cudaMemcpyAsync(
+        CUDA_CHECK(cudaMemcpyAsync(
             this->host_ptrs[i], this->device_ptrs[i + this->num_inputs], osize, cudaMemcpyDeviceToHost, this->stream));
     }
     cudaStreamSynchronize(this->stream);
