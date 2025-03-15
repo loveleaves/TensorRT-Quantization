@@ -1,0 +1,29 @@
+name: "yolo" # 模型名称，和你的文件夹一一对应
+platform: "onnxruntime_onnx" # 指定模型运行的后端
+max_batch_size: 0 # 最大的批次大小，0代表自动
+input [ # Triton Input输入对象配置
+  {
+    name: "images", # 输入名称（不要动，v8的模型定义就是这个）
+    data_type: TYPE_FP32, # 根据你的权重类型进行修改，这里我的模型时FP32
+    dims: [ 1,3,640,640 ] # 输入为1批次，大小为640x640像素的RGB图像
+  }
+]
+output[ # Triton Output输出对象配置
+  {
+    name: "output0", # 输出名称
+    data_type: TYPE_FP32 # 输出数据类型
+    dims: [ 1,84,8400 ] # 输出大小，一般默认是1批次，N个类，8400个目标（当然比这个值小也正常）
+  }
+]
+# 版本策略配置
+# 其中latest代表Triton加载的最新版本模型
+# num_version代表版本号
+version_policy: { latest { num_versions: 1 } }
+# instance_group：模型运行实例（设备）组配置
+instance_group: [
+  {
+    count: 1 # 数量
+    kind: KIND_GPU # 类型
+    gpus: [ 0 ] # 如果参数项为GPU，则该列表将指定对应序号下的可见CUDA设备来运行模型
+  }
+]

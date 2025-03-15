@@ -11,11 +11,10 @@
 #include <opencv2/dnn/dnn.hpp>
 #include <opencv2/opencv.hpp>
 
-static inline int read_files_in_dir(const char *p_dir_name, std::vector<std::string> &file_names)
+static inline void read_files_in_dir(const char *p_dir_name, std::vector<std::string> &file_names)
 {
     std::string path(p_dir_name);
     cv::glob(path + "/*.jpg", file_names);
-
 }
 
 Int8Calibrator::Int8Calibrator(int batchsize, int input_w, int input_h, const char *img_dir, const char *calib_table_name,

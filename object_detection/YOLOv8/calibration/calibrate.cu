@@ -54,8 +54,7 @@ int main(int argc, char **argv)
     auto builder = std::unique_ptr<nvinfer1::IBuilder>(nvinfer1::createInferBuilder(logger));
 
     // 创建网络(显性batch)
-    uint32_t flag = 1U << static_cast<uint32_t>(nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH);
-    auto network = std::unique_ptr<nvinfer1::INetworkDefinition>(builder->createNetworkV2(flag));
+    auto network = std::unique_ptr<nvinfer1::INetworkDefinition>(builder->createNetworkV2(0u));
 
     // 创建ONNX解析器：parser
     auto parser = std::unique_ptr<nvonnxparser::IParser>(nvonnxparser::createParser(*network, logger));

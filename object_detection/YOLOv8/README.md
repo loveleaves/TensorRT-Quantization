@@ -7,3 +7,6 @@
 
 ## calibration
 [docs](./calibration/README.md)
+
+## deploy
+[docs](./deploy/README.md)
