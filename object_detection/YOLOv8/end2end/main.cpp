@@ -131,8 +131,9 @@ int main(int argc, char** argv)
             yolov8->draw_objects(image, res, objs, CLASS_NAMES, COLORS);
             auto tc = (double)std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.;
             printf("cost %2.4lf ms\n", tc);
-            cv::imshow("result", res);
-            cv::waitKey(0);
+            // cv::imshow("result", res);
+            cv::imwrite("./output.jpg", res);
+            // cv::waitKey(0);
         }
     }
     cv::destroyAllWindows();

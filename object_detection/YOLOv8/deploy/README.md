@@ -28,6 +28,7 @@ python3 export_detection.py \
 ### Installation
 ```
 docker run -it --gpus all -v /var/run/docker.sock:/var/run/docker.sock -v ${PWD}:/models  --net=host nvcr.io/nvidia/tritonserver:24.09-py3
+# 最新版本triton-model-analyzer依赖glibc2.38，glibcxx3.4.32，之前triton容器没有对应版本需要手动源码编译安装
 pip3 install triton-model-analyzer==1.44.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
